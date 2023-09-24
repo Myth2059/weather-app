@@ -1,4 +1,4 @@
-import WeatherBox from "@/components/weatherBox1/WeatherBox";
+import WeatherBox from "@/components/weatherBox/WeatherBox";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -13,8 +13,6 @@ export default function Prueba() {
     console.log(data);
   }, [data]);
 
-  let date = new Date();
-  date.setDate(date.getDate() + 2);
   return (
     <div className="flex flex-wrap gap-4">
       {data.map((data, i) => {
@@ -24,6 +22,7 @@ export default function Prueba() {
             min={data.day.mintemp_c}
             max={data.day.maxtemp_c}
             date={new Date(data.date + "T00:00")}
+            imgSrc={"https:"+data.day.condition.icon}
           />
         );
       })}
