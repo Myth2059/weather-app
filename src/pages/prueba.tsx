@@ -1,12 +1,14 @@
+import CurrentBox from "@/components/currentBox/CurrentBox";
 import WeatherBox from "@/components/weatherBox/WeatherBox";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import useRetrieveData from "@/hooks/useRetrieveData";
+
+import { useEffect } from "react";
 
 export default function Prueba() {
-  const { data, loading, getForecast } = useRetrieveData();
+  const { data, loading, getForecast,current } = useRetrieveData();
 
   useEffect(() => {
-    getForecast("Neiva");
+    getForecast("Salta");
   }, []);
 
   useEffect(() => {
@@ -14,56 +16,24 @@ export default function Prueba() {
   }, [data]);
 
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className="flex gap-4  h-full">
+      <div className="w-full max-w-sm border">
+      {<CurrentBox min={data[0].day.mintemp_c} max={data[0].day.maxtemp_c} current={current?.temp_c}  imgSrc={data[0] ? "https:"+data[0].day.condition.icon : undefined} text={data[0] ? data[0].day.condition.text : ""}/>}
+      </div>
       {data.map((data, i) => {
-        return (
-          <WeatherBox
-            key={i + "forecast"}
-            min={data.day.mintemp_c}
-            max={data.day.maxtemp_c}
-            date={new Date(data.date + "T00:00")}
-            imgSrc={"https:"+data.day.condition.icon}
-          />
-        );
+        if (i>0) {
+          return (
+            <WeatherBox
+              key={i + "forecast"}
+              min={data.day.mintemp_c}
+              max={data.day.maxtemp_c}
+              date={new Date(data.date + "T00:00")}
+              imgSrc={"https:" + data.day.condition.icon}
+            />
+          );
+        }
+        
       })}
     </div>
   );
-}
-
-function useRetrieveData() {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [data, setData] = useState<forecastday[]>([]);
-
-  function getForecast(city: string) {
-    setLoading(true);
-    axios
-      .get(
-        `http://api.weatherapi.com/v1/forecast.json?key=7d8075d689b848f2ad515246231909&q=${city}&days=6`
-      )
-      .then((response) => {
-        let datasco: forecastday[] = [...response.data.forecast.forecastday];
-
-        setData(datasco);
-        setLoading!(false);
-      });
-  }
-
-  return { loading, data, getForecast };
-}
-
-interface forecastday {
-  date: string;
-  day: day;
-}
-interface day {
-  condition: condition;
-  maxtemp_c: number;
-  maxtemp_f: number;
-  mintemp_c: number;
-  mintemp_f: number;
-}
-
-interface condition {
-  icon: string;
-  text: string;
 }

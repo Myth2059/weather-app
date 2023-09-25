@@ -5,4 +5,8 @@
 body {
   margin: 0;
   background-color: #092635;
+  height: 100vh;
+}
+#__next{
+  height: 100%;
 }
